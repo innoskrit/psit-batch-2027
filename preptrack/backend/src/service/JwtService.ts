@@ -7,7 +7,7 @@ export class JwtService {
     return jwt.sign(
       { email, role, userId },
       "dOJbhcdcszQTmsBnLfj5lDO56yRhyrmpGgJkc6xrIQY",
-      { expiresIn: "2m" }
+      { expiresIn: "60m" }
     );
   };
 }
