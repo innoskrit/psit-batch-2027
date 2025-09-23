@@ -2,8 +2,12 @@ import express, { Request, Response } from "express";
 import { initializeDatabase } from "./config/Database";
 import trackRouter from "./routes/TrackRoutes";
 import authRouter from "./routes/AuthRoutes";
+import * as dotenv from "dotenv";
 
 const app = express();
+
+dotenv.config();
+
 app.use(express.json());
 
 const port: number = 8080;
