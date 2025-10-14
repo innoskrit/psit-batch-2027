@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AuthService } from "../service/AuthService";
+import { AuthResponse } from "../model/AuthResponse";
 
 const authService = new AuthService();
 
@@ -22,8 +23,10 @@ export const signUp = async (request: Request, response: Response) => {
 };
 
 export const signIn = async (request: Request, response: Response) => {
-  const token = await authService.signIn(request.body);
-  if (token == null) {
+  const userDetails: AuthResponse | null = await authService.signIn(
+    request.body
+  );
+  if (userDetails == null) {
     response
       .status(400)
       .json({ message: "Please check your email or password." });
@@ -32,5 +35,5 @@ export const signIn = async (request: Request, response: Response) => {
 
   response
     .status(201)
-    .json({ message: "User is logged in successfully.", token });
+    .json({ message: "User is logged in successfully.", userDetails });
 };

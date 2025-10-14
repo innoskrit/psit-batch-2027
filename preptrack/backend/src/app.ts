@@ -3,8 +3,16 @@ import { initializeDatabase } from "./config/Database";
 import trackRouter from "./routes/TrackRoutes";
 import authRouter from "./routes/AuthRoutes";
 import * as dotenv from "dotenv";
+import cors from "cors";
+
+const corsOptions = {
+  credentials: true,
+  origin: ["http://localhost:5174"], // Whitelist the domains you want to allow
+};
 
 const app = express();
+
+app.use(cors(corsOptions));
 
 dotenv.config();
 

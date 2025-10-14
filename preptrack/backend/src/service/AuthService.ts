@@ -3,6 +3,7 @@ import { User } from "../model/User";
 import { UserService } from "./UserService";
 import bcrypt from "bcrypt";
 import { JwtService } from "./JwtService";
+import { AuthResponse } from "../model/AuthResponse";
 
 export class AuthService {
   private userService: UserService;
@@ -30,7 +31,7 @@ export class AuthService {
     return createdUser;
   }
 
-  async signIn(signInRequest: User): Promise<string | null> {
+  async signIn(signInRequest: User): Promise<AuthResponse | null> {
     const user = await this.userService.findByEmail(signInRequest.email);
 
     if (!user) {
@@ -43,7 +44,12 @@ export class AuthService {
     );
 
     if (isPasswordValid) {
-      return this.jwtService.generateToken(user.email, user.role, user.id);
+      const token = this.jwtService.generateToken(
+        user.email,
+        user.role,
+        user.id
+      );
+      return { token: token, email: user.email, name: user.name };
     }
     return null;
   }
