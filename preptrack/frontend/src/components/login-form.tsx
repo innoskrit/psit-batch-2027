@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useGoogleLogin, type CodeResponse } from "@react-oauth/google";
 import {
   Card,
   CardContent,
@@ -26,7 +27,7 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
 
   const handleLogin = async () => {
     try {
@@ -42,6 +43,37 @@ export function LoginForm({
       navigate("/signin");
     }
   };
+
+  const handleGoogleLoginSuccess = async (codeResponse: CodeResponse) => {
+    try {
+      const success = await googleLogin(codeResponse);
+      if (success) {
+        navigate("/dashboard");
+      } else {
+        console.error("Failed to login by Google. Please try again.");
+        navigate("/signin");
+      }
+    } catch (error) {
+      console.error("Failed to login by Google. Please try again.");
+      navigate("/signin");
+    }
+  };
+
+  const handleGoogleLoginError = (
+    errorResponse: Pick<
+      CodeResponse,
+      "error" | "error_description" | "error_uri"
+    >
+  ) => {
+    console.error(errorResponse);
+    navigate("/signin");
+  };
+
+  const handleGoogleAuthentication = useGoogleLogin({
+    onSuccess: handleGoogleLoginSuccess,
+    onError: handleGoogleLoginError,
+    flow: "auth-code",
+  });
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -87,8 +119,12 @@ export function LoginForm({
               <Button onClick={handleLogin} type="submit">
                 Login
               </Button>
-              <Button variant="outline" type="button">
-                Login with Google
+              <Button
+                onClick={handleGoogleAuthentication}
+                variant="outline"
+                type="button"
+              >
+                Continue with Google
               </Button>
               <FieldDescription className="text-center">
                 Don&apos;t have an account? <a href="#">Sign up</a>

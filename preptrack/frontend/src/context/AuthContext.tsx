@@ -1,5 +1,6 @@
-import { signInAPI } from "@/apis/apis";
+import { signInAPI, signInByGoogleAPI } from "@/apis/apis";
 import type { SignInRequest, UserSession } from "@/types/type";
+import type { CodeResponse } from "@react-oauth/google";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface AuthContextType {
@@ -8,6 +9,7 @@ interface AuthContextType {
   isAdmin: boolean;
   login: (signInRequest: SignInRequest) => Promise<boolean>;
   logout: () => void;
+  googleLogin: (codeResponse: CodeResponse) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,7 +25,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await signInAPI(signInRequest);
 
       if (response) {
-        const { message, userDetails } = response.data;
+        const { userDetails } = response.data;
+        setUserSession(userDetails);
+        localStorage.setItem("userSession", JSON.stringify(userDetails));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+    }
+    return false;
+  };
+
+  const googleLogin = async (codeResponse: CodeResponse): Promise<boolean> => {
+    try {
+      if (!codeResponse?.code) {
+        console.warn("Google OAuth 'code' missing in response");
+        return false;
+      }
+      const response = await signInByGoogleAPI(codeResponse.code);
+      console.log("Response from google API", response);
+      if (response) {
+        const { userDetails } = response.data;
         setUserSession(userDetails);
         localStorage.setItem("userSession", JSON.stringify(userDetails));
         return true;
@@ -36,7 +59,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    // we will try to logout the user;
+    localStorage.removeItem("userSession");
+    setUserSession(null);
   };
 
   const value = {
@@ -45,6 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isAdmin: false,
     login,
     logout,
+    googleLogin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

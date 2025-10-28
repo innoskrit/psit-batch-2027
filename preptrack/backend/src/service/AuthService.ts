@@ -4,6 +4,8 @@ import { UserService } from "./UserService";
 import bcrypt from "bcrypt";
 import { JwtService } from "./JwtService";
 import { AuthResponse } from "../model/AuthResponse";
+import { oauth2Client } from "../config/GoogleAuthConfig";
+import axios from "axios";
 
 export class AuthService {
   private userService: UserService;
@@ -52,5 +54,29 @@ export class AuthService {
       return { token: token, email: user.email, name: user.name };
     }
     return null;
+  }
+
+  async signInByGoogle(code: string): Promise<AuthResponse | null> {
+    console.log("Code sent from client: ", code);
+    const googleResponse = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(googleResponse.tokens);
+    const userResponse = await axios.get(
+      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleResponse.tokens.access_token}`
+    );
+
+    const { email, name, verified_email, picture } = userResponse.data;
+    const userInfo = await this.userService.saveUser({
+      email,
+      name,
+      password: "",
+      isVerified: verified_email,
+      profileUrl: picture,
+    });
+    const token = this.jwtService.generateToken(
+      email,
+      userInfo.role,
+      userInfo.id
+    );
+    return { token: token, email: userInfo.email, name: userInfo.name };
   }
 }

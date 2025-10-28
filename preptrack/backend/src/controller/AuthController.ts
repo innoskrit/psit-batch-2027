@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { AuthService } from "../service/AuthService";
 import { AuthResponse } from "../model/AuthResponse";
+import { oauth2Client } from "../config/GoogleAuthConfig";
+import axios from "axios";
 
 const authService = new AuthService();
 
@@ -30,6 +32,29 @@ export const signIn = async (request: Request, response: Response) => {
     response
       .status(400)
       .json({ message: "Please check your email or password." });
+    return;
+  }
+
+  response
+    .status(201)
+    .json({ message: "User is logged in successfully.", userDetails });
+};
+
+export const signInByGoogle = async (request: Request, response: Response) => {
+  const { code } = request.query as { code?: string };
+
+  if (!code || (Array.isArray(code) && code.length === 0)) {
+    response.status(400).json({ message: "Missing 'code' in query params." });
+    return;
+  }
+
+  const codeStr = code ? code : "";
+
+  const userDetails: AuthResponse | null = await authService.signInByGoogle(
+    codeStr
+  );
+  if (userDetails == null) {
+    response.status(400).json({ message: "Google authentication failed." });
     return;
   }
 
