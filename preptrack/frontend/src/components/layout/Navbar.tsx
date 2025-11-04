@@ -10,10 +10,30 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
+import { useEffect, useState } from "react";
+import { findAllTracks } from "@/apis/apis";
+import type { Track } from "@/types/type";
 
 export default function Navbar() {
   const { isAuthenticated, userSession, logout } = useAuth();
+  const [tracks, setTracks] = useState<Track[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const findTracks = async () => {
+      try {
+        const response = await findAllTracks();
+        const tracksData = response?.data;
+        if (Array.isArray(tracksData)) {
+          setTracks(tracksData);
+        }
+      } catch (error) {
+        // ignore for now; could show toast/log if needed
+      }
+    };
+
+    findTracks();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -53,15 +73,17 @@ export default function Navbar() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>Choose a track</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/tracks/dsa">Data Structures & Algorithms</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/tracks/system-design">System Design</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/tracks/machine-learning">Machine Learning</Link>
-                </DropdownMenuItem>
+                {tracks.length > 0 ? (
+                  tracks.map((track) => (
+                    <DropdownMenuItem key={track.id} asChild>
+                      <Link to={`/tracks/${track.slug}`}>{track.name}</Link>
+                    </DropdownMenuItem>
+                  ))
+                ) : (
+                  <DropdownMenuItem disabled>
+                    No tracks available
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -101,10 +123,7 @@ export default function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger className="rounded-full">
                 <Avatar>
-                  <AvatarImage
-                    src={userSession?.avatarUrl || ""}
-                    alt={userSession?.name || "User"}
-                  />
+                  <AvatarImage src={""} alt={userSession?.name || "User"} />
                   <AvatarFallback>
                     {userSession?.name?.slice(0, 2)?.toUpperCase() || "PR"}
                   </AvatarFallback>

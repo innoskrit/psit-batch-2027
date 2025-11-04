@@ -8,3 +8,5 @@ export const signInAPI = (signInRequest: SignInRequest) =>
 
 export const signInByGoogleAPI = (code: string) =>
   api.post(`/auth/signin/google?code=${code}`);
+
+export const findAllTracks = () => api.get("/tracks");
