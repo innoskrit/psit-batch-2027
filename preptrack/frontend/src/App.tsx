@@ -13,7 +13,7 @@ function App() {
   const GoogleAuthWrapperSignInPage = () => {
     return (
       <>
-        <GoogleOAuthProvider clientId="181529662565-3qbucfkoopvakshcp9f5vto86211jc1f.apps.googleusercontent.com">
+        <GoogleOAuthProvider clientId="181529662565-6v7ngs3ole1sm9gupcp7g1kcclsugj63.apps.googleusercontent.com">
           <SignIn />
         </GoogleOAuthProvider>
       </>

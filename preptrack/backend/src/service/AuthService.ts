@@ -65,13 +65,16 @@ export class AuthService {
     );
 
     const { email, name, verified_email, picture } = userResponse.data;
-    const userInfo = await this.userService.saveUser({
-      email,
-      name,
-      password: "",
-      isVerified: verified_email,
-      profileUrl: picture,
-    });
+    let userInfo = await this.userService.findByEmail(email);
+    if (userInfo === null || userInfo === undefined) {
+      userInfo = await this.userService.saveUser({
+        email,
+        name,
+        password: "",
+        isVerified: verified_email,
+        profileUrl: picture,
+      });
+    }
     const token = this.jwtService.generateToken(
       email,
       userInfo.role,
