@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from "typeorm";
+import { Topic } from "./Topic";
 
 @Entity({ name: "tracks" })
 export class Track {
@@ -27,6 +29,9 @@ export class Track {
 
   @Column({ type: "boolean", nullable: true })
   isNew?: boolean;
+
+  @OneToMany(() => Topic, (topic) => topic.track)
+  topics!: Topic[];
 
   @CreateDateColumn()
   createdAt!: Date;

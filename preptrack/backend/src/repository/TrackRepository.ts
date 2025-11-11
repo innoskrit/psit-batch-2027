@@ -15,11 +15,11 @@ export class TrackRepository {
   }
 
   async findAll(): Promise<Track[]> {
-    return this.repository.find();
+    return this.repository.find({ relations: ["topics"] });
   }
 
   async findById(id: string): Promise<Track | null> {
-    return this.repository.findOne({ where: { id } });
+    return this.repository.findOne({ where: { id }, relations: ["topics"] });
   }
 
   async update(id: string, track: Partial<Track>): Promise<Track | null> {
@@ -30,7 +30,7 @@ export class TrackRepository {
   }
 
   async findBySlug(slug: string): Promise<Track | null> {
-    return this.repository.findOne({ where: { slug } });
+    return this.repository.findOne({ where: { slug }, relations: ["topics"] });
   }
 
   async delete(id: string): Promise<boolean> {

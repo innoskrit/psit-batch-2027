@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { initializeDatabase } from "./config/Database";
 import trackRouter from "./routes/TrackRoutes";
+import topicRouter from "./routes/TopicRoutes";
 import authRouter from "./routes/AuthRoutes";
 import * as dotenv from "dotenv";
 import cors from "cors";
@@ -21,6 +22,7 @@ app.use(express.json());
 const port: number = 8080;
 
 app.use("/api/v1", trackRouter);
+app.use("/api/v1", topicRouter);
 app.use("/api/v1", authRouter);
 
 // this route is for health check of the app
