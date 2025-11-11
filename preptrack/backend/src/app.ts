@@ -1,10 +1,10 @@
 import express, { Request, Response } from "express";
 import { initializeDatabase } from "./config/Database";
 import trackRouter from "./routes/TrackRoutes";
-import topicRouter from "./routes/TopicRoutes";
 import authRouter from "./routes/AuthRoutes";
 import * as dotenv from "dotenv";
 import cors from "cors";
+import topicRouter from "./routes/TopicRoutes";
 
 const corsOptions = {
   credentials: true,

@@ -13,6 +13,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { findAllTracks } from "@/apis/apis";
 import type { Track } from "@/types/type";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const { isAuthenticated, userSession, logout } = useAuth();

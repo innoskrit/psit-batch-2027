@@ -1,6 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import * as dotenv from "dotenv";
 
+dotenv.config();
+
+const jwtSecretFromEnv = process.env.JWT_SECRET_KEY || process.env.JWT_SECRET;
+if (!jwtSecretFromEnv) {
+  throw new Error(
+    "JWT_SECRET or JWT_SECRET_KEY environment variable is not set."
+  );
+}
 declare global {
   namespace Express {
     interface Request {
@@ -28,10 +37,7 @@ export const verifyToken = (
 
   const token = authHeaders.split(" ")[1];
   try {
-    const res = jwt.verify(
-      token!,
-      "dOJbhcdcszQTmsBnLfj5lDO56yRhyrmpGgJkc6xrIQY"
-    ) as JwtPayload;
+    const res = jwt.verify(token!, jwtSecretFromEnv) as JwtPayload;
     request.user = res;
     next();
   } catch (err) {
