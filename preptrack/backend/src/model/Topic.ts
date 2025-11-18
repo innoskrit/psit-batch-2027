@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
   Index,
   ManyToOne,
+  OneToMany,
 } from "typeorm";
 import { Track } from "./Track";
+import { SubTopic } from "./SubTopic";
 
 @Entity({ name: "topics" })
 export class Topic {
@@ -26,6 +28,9 @@ export class Topic {
 
   @ManyToOne(() => Track, (track) => track.topics, { onDelete: "CASCADE" })
   track!: Track;
+
+  @OneToMany(() => SubTopic, (subTopic) => subTopic.topic)
+  subtopics!: SubTopic[];
 
   @CreateDateColumn()
   createdAt!: Date;

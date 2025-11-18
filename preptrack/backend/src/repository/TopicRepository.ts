@@ -15,11 +15,14 @@ export class TopicRepository {
   }
 
   async findAll(): Promise<Topic[]> {
-    return this.repository.find({ relations: ["track"] });
+    return this.repository.find({ relations: ["track", "subtopics"] });
   }
 
   async findById(id: string): Promise<Topic | null> {
-    return this.repository.findOne({ where: { id }, relations: ["track"] });
+    return this.repository.findOne({
+      where: { id },
+      relations: ["track", "subtopics"],
+    });
   }
 
   async update(id: string, topic: Partial<Topic>): Promise<Topic | null> {
@@ -30,7 +33,10 @@ export class TopicRepository {
   }
 
   async findBySlug(slug: string): Promise<Topic | null> {
-    return this.repository.findOne({ where: { slug }, relations: ["track"] });
+    return this.repository.findOne({
+      where: { slug },
+      relations: ["track", "subtopics"],
+    });
   }
 
   async delete(id: string): Promise<boolean> {

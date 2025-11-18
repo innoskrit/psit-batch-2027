@@ -5,6 +5,7 @@ import authRouter from "./routes/AuthRoutes";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import topicRouter from "./routes/TopicRoutes";
+import subTopicRouter from "./routes/SubTopicRoutes";
 
 const corsOptions = {
   credentials: true,
@@ -23,6 +24,7 @@ const port: number = 8080;
 
 app.use("/api/v1", trackRouter);
 app.use("/api/v1", topicRouter);
+app.use("/api/v1", subTopicRouter);
 app.use("/api/v1", authRouter);
 
 // this route is for health check of the app
