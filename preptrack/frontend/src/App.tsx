@@ -10,6 +10,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "./components/ui/sonner";
 import TrackDetailPage from "./pages/TrackDetailPage";
+import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   const GoogleAuthWrapperSignInPage = () => {
@@ -23,54 +24,56 @@ function App() {
   };
   return (
     <>
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <AppLayout>
-                  <Home />
-                </AppLayout>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <AppLayout>
-                  <Dashboard />
-                </AppLayout>
-              }
-            />
-            <Route
-              path="/tracks/:slug"
-              element={
-                <AppLayout>
-                  <TrackDetailPage />
-                </AppLayout>
-              }
-            />
-            <Route path="/signin" element={<GoogleAuthWrapperSignInPage />} />
-            <Route
-              path="/about"
-              element={
-                <AppLayout>
-                  <About />
-                </AppLayout>
-              }
-            />
-            <Route
-              path="/contact"
-              element={
-                <AppLayout>
-                  <Contact />
-                </AppLayout>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-      <Toaster />
+      <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <AppLayout>
+                    <Home />
+                  </AppLayout>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <AppLayout>
+                    <Dashboard />
+                  </AppLayout>
+                }
+              />
+              <Route
+                path="/tracks/:slug"
+                element={
+                  <AppLayout>
+                    <TrackDetailPage />
+                  </AppLayout>
+                }
+              />
+              <Route path="/signin" element={<GoogleAuthWrapperSignInPage />} />
+              <Route
+                path="/about"
+                element={
+                  <AppLayout>
+                    <About />
+                  </AppLayout>
+                }
+              />
+              <Route
+                path="/contact"
+                element={
+                  <AppLayout>
+                    <Contact />
+                  </AppLayout>
+                }
+              />
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
     </>
   );
 }
