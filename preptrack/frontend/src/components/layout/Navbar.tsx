@@ -13,6 +13,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { findAllTracks } from "@/apis/apis";
 import type { Track } from "@/types/type";
+import { toast } from "sonner";
+import { ThemeToggle } from "../theme-toggle";
 
 export default function Navbar() {
   const { isAuthenticated, userSession, logout } = useAuth();
@@ -115,6 +117,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           {!isAuthenticated ? (
             <Button asChild>
               <Link to="/signin">Sign In</Link>

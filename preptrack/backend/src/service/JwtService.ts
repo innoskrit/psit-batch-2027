@@ -3,15 +3,18 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-if (!process.env.JWT_SECRET_KEY) {
-  throw new Error("JWT_SECRET environment variable is not set.");
+const jwtSecretFromEnv = process.env.JWT_SECRET_KEY || process.env.JWT_SECRET;
+if (!jwtSecretFromEnv) {
+  throw new Error(
+    "JWT_SECRET or JWT_SECRET_KEY environment variable is not set."
+  );
 }
 
 if (!process.env.JWT_TIMEOUT) {
   throw new Error("JWT_TIMEOUT environment variable is not set.");
 }
 
-const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY;
+const jwtSecretKey: jwt.Secret = jwtSecretFromEnv;
 const jwtExpiration = process.env.JWT_TIMEOUT;
 
 export class JwtService {

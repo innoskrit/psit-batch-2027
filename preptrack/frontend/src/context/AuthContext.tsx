@@ -2,6 +2,7 @@ import { signInAPI, signInByGoogleAPI } from "@/apis/apis";
 import type { SignInRequest, UserSession } from "@/types/type";
 import type { CodeResponse } from "@react-oauth/google";
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 
 interface AuthContextType {
   userSession: UserSession | null;
@@ -28,10 +29,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const { userDetails } = response.data;
         setUserSession(userDetails);
         localStorage.setItem("userSession", JSON.stringify(userDetails));
+        toast.success("Logged in successfully.");
         return true;
       }
+      toast.error("Incorrect email and password. Please try again.");
       return false;
     } catch (error) {
+      toast.error("Internal server error, login failed. Please try again.");
       console.log(error);
     }
     return false;

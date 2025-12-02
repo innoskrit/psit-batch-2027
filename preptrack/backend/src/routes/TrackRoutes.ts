@@ -12,7 +12,7 @@ import { requireAdminRole, verifyToken } from "../middleware/AuthMiddleware";
 const trackRouter = express.Router();
 
 trackRouter.post("/tracks", verifyToken, requireAdminRole, createTrack);
-trackRouter.get("/tracks", verifyToken, findTracks);
+trackRouter.get("/tracks", findTracks);
 trackRouter.get("/tracks/:id", findTrackById);
 trackRouter.get("/tracks/slug/:id", findTrackBySlug);
 trackRouter.put("/tracks/:id", verifyToken, requireAdminRole, updateTrack);

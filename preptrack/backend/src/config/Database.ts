@@ -3,6 +3,8 @@ import { DataSource } from "typeorm";
 import { Track } from "../model/Track";
 import { User } from "../model/User";
 import { Topic } from "../model/Topic";
+import { SubTopic } from "../model/SubTopic";
+import { UserProgress } from "../model/UserProgress";
 
 export const PostgresDataSource = new DataSource({
   type: "postgres",
@@ -13,7 +15,7 @@ export const PostgresDataSource = new DataSource({
   database: "preptrack",
   synchronize: true,
   logging: false,
-  entities: [Track, User, Topic],
+  entities: [Track, User, Topic, SubTopic, UserProgress],
   migrations: [],
   subscribers: [],
 });

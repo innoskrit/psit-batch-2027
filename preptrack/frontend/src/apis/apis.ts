@@ -25,3 +25,6 @@ export const signInByGoogleAPI = (code: string) =>
   api.post(`/auth/signin/google?code=${code}`);
 
 export const findAllTracks = () => api.get("/tracks");
+
+export const findTrackBySlug = (slug: string) =>
+  api.get(`/tracks/slug/${slug}`);
