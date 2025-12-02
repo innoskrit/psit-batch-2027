@@ -25,7 +25,8 @@ export class UserProgress {
   @Column({ type: "boolean", default: false })
   isCompleted!: boolean;
 
-  @Column({ type: "timestamp", nullable: true })
+  @Column({ type: "timestamp" })
+  @UpdateDateColumn()
   completedAt!: Date | null;
 
   @CreateDateColumn()

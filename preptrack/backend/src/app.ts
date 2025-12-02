@@ -6,6 +6,7 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import topicRouter from "./routes/TopicRoutes";
 import subTopicRouter from "./routes/SubTopicRoutes";
+import userProgressRouter from "./routes/UserProgressRoutes";
 
 const corsOptions = {
   credentials: true,
@@ -26,6 +27,7 @@ app.use("/api/v1", trackRouter);
 app.use("/api/v1", topicRouter);
 app.use("/api/v1", subTopicRouter);
 app.use("/api/v1", authRouter);
+app.use("/api/v1", userProgressRouter);
 
 // this route is for health check of the app
 app.get("/health", (req: Request, res: Response) => {
