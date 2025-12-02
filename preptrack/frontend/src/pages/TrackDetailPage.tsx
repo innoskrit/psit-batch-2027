@@ -29,6 +29,21 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { findTrackBySlug } from "@/apis/apis";
+import { Code, FileText, Video } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+
+type SubTopic = {
+  id: string;
+  name: string;
+  subtopicUrl: string | null;
+  articleUrl: string | null;
+  videoUrl: string | null;
+  difficulty: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 type Topic = {
   id: string;
@@ -37,7 +52,7 @@ type Topic = {
   description: string;
   createdAt: string;
   updatedAt: string;
-  // future: subtopics: Subtopic[]
+  subtopics: SubTopic[];
 };
 
 type Track = {
@@ -57,6 +72,7 @@ export default function TrackDetailPage() {
   const [data, setData] = useState<Track | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, userSession } = useAuth();
 
   useEffect(() => {
     if (!slug) return;
@@ -90,6 +106,30 @@ export default function TrackDetailPage() {
     [data?.topics]
   );
 
+  const handleMarkCompleteButton = () => {
+    if (isAuthenticated) {
+      // TODO: Call backend API to mark subtopic as complete for this user
+      console.log(
+        "The topic is marked as completed for user " + userSession?.email
+      );
+    } else {
+      toast.warning("Please sign in", {
+        description: (
+          <span className="block text-left">
+            Please{" "}
+            <a
+              href="/signin"
+              className="underline underline-offset-4 font-medium"
+            >
+              sign in
+            </a>{" "}
+            if you want to mark this topic complete.
+          </span>
+        ),
+      });
+    }
+  };
+
   if (loading) return <LoadingState />;
   if (error) return <ErrorState message={error} />;
   if (!data) return <EmptyState />;
@@ -108,10 +148,7 @@ export default function TrackDetailPage() {
                 {data.description}
               </CardDescription>
             </div>
-            <div className="flex gap-2">
-              {data.isNew && <Badge>New</Badge>}
-              {!data.isActive && <Badge variant="destructive">Inactive</Badge>}
-            </div>
+            <div className="flex gap-2">{data.isNew && <Badge>New</Badge>}</div>
           </div>
         </CardHeader>
       </Card>
@@ -151,28 +188,70 @@ export default function TrackDetailPage() {
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="rounded-md border">
-                      <div className="p-3 text-xs text-muted-foreground">
+                      <div className="p-3 text-xs text-left text-muted-foreground">
                         Subtopics
                       </div>
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="w-[280px]">Name</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead className="w-[160px]">Actions</TableHead>
+                            <TableHead className="w-[220px]">Name</TableHead>
+                            <TableHead>Difficulty</TableHead>
+                            <TableHead>Resources</TableHead>
+                            <TableHead className="w-[160px] text-right">
+                              Actions
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {/* Replace with real subtopics when API is ready */}
-                          <TableRow>
-                            <TableCell
-                              colSpan={3}
-                              className="text-muted-foreground"
-                            >
-                              Subtopics will appear here when the API is
-                              available.
-                            </TableCell>
-                          </TableRow>
+                          {t.subtopics && t.subtopics.length > 0 ? (
+                            t.subtopics.map((subTopic) => (
+                              <TableRow key={subTopic.id}>
+                                <TableCell className="font-medium text-left">
+                                  {subTopic.name}
+                                </TableCell>
+                                <TableCell className="capitalize text-sm text-left text-muted-foreground">
+                                  {subTopic.difficulty}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex gap-2">
+                                    <ResourceIcon
+                                      url={subTopic.subtopicUrl}
+                                      label="View problem"
+                                      icon={Code}
+                                    />
+                                    <ResourceIcon
+                                      url={subTopic.articleUrl}
+                                      label="Read article"
+                                      icon={FileText}
+                                    />
+                                    <ResourceIcon
+                                      url={subTopic.videoUrl}
+                                      label="Watch video"
+                                      icon={Video}
+                                    />
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <Button
+                                    onClick={handleMarkCompleteButton}
+                                    size="sm"
+                                    variant="outline"
+                                  >
+                                    Mark Complete
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell
+                                colSpan={4}
+                                className="text-muted-foreground"
+                              >
+                                No subtopics yet.
+                              </TableCell>
+                            </TableRow>
+                          )}
                         </TableBody>
                       </Table>
                     </div>
@@ -238,3 +317,27 @@ function EmptyState() {
     </div>
   );
 }
+
+type ResourceIconProps = {
+  url: string | null;
+  label: string;
+  icon: LucideIcon;
+};
+
+const ResourceIcon = ({ url, label, icon: Icon }: ResourceIconProps) => {
+  if (url) {
+    return (
+      <Button variant="ghost" size="icon" asChild>
+        <a href={url} target="_blank" rel="noreferrer" aria-label={label}>
+          <Icon className="h-4 w-4" />
+        </a>
+      </Button>
+    );
+  }
+
+  return (
+    <Button variant="ghost" size="icon" disabled aria-label={label}>
+      <Icon className="h-4 w-4 text-muted-foreground" />
+    </Button>
+  );
+};

@@ -1,10 +1,21 @@
+import { Track } from "../model/Track";
 import { TopicService } from "../service/TopicService";
 import { Request, Response } from "express";
 const topicService = new TopicService();
 
 export const createTopic = async (request: Request, response: Response) => {
   try {
-    const topic = await topicService.create(request.body);
+    const { trackId, ...topicData } = request.body;
+    if (!trackId) {
+      response.status(400).json({ message: "trackId is required" });
+      return;
+    }
+
+    const payload = {
+      ...topicData,
+      track: { id: trackId } as Track,
+    };
+    const topic = await topicService.create(payload);
     response.status(200).json(topic);
   } catch (error) {
     response.status(500).json({ error: error });

@@ -11,7 +11,12 @@ import { requireAdminRole, verifyToken } from "../middleware/AuthMiddleware";
 
 const subTopicRouter = express.Router();
 
-subTopicRouter.post("/subtopics", createSubTopic);
+subTopicRouter.post(
+  "/subtopics",
+  verifyToken,
+  requireAdminRole,
+  createSubTopic
+);
 subTopicRouter.get("/subtopics", findSubTopics);
 subTopicRouter.get("/subtopics/:id", findSubTopicById);
 subTopicRouter.get("/topics/:topicId/subtopics", findSubTopicsByTopicId);

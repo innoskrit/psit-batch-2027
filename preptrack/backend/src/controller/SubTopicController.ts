@@ -1,11 +1,24 @@
 import { Request, Response } from "express";
 import { SubTopicService } from "../service/SubTopicService";
+import { Topic } from "../model/Topic";
 
 const subTopicService = new SubTopicService();
 
 export const createSubTopic = async (request: Request, response: Response) => {
   try {
-    const subTopic = await subTopicService.create(request.body);
+    const { topicId, ...subTopicData } = request.body;
+    if (!topicId) {
+      response.status(400).json({ message: "topicId is required" });
+      return;
+    }
+
+    const payload = {
+      ...subTopicData,
+      topic: { id: topicId } as Topic,
+    };
+
+    const subTopic = await subTopicService.create(payload);
+    console.log("debugging create subtopic 3", subTopic);
     response.status(200).json(subTopic);
   } catch (error) {
     response.status(500).json({ error: error });
